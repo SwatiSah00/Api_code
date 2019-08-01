@@ -49,3 +49,77 @@ Following code to check error log:
 tail -f /var/log/mysql/error.log
 
 
+Following Table were created:
+For Todo
+
+CREATE TABLE `share_list` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) DEFAULT NULL,
+  `list_id` int(11) DEFAULT NULL,
+  `sender_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+
+); 
+
+
+CREATE TABLE `my_list` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) DEFAULT NULL,
+  `list_name` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+
+);
+
+
+DROP TABLE IF EXISTS `todo`;
+
+
+CREATE TABLE `todo` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) DEFAULT NULL,
+  `subject` varchar(100) DEFAULT NULL,
+  `description` varchar(1000) DEFAULT NULL,
+  `created_on` datetime DEFAULT NULL,
+  `completion_date` datetime DEFAULT NULL,
+  `status_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+  );
+  
+  
+  DROP TABLE IF EXISTS `users`;
+  
+  
+  CREATE TABLE `users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `login_id` varchar(40) NOT NULL,
+  `password` varchar(45) NOT NULL,
+  `created_on` datetime(6) NOT NULL,
+  PRIMARY KEY (`id`)
+)
+
+
+For Chat
+
+DROP TABLE IF EXISTS `messages`;
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+ `user_id` int(11) DEFAULT NULL,
+ `sender_id` int(11) DEFAULT NULL,
+  `created_on` datetime(6) NOT NULL,
+ `message` longtext DEFAULT NULL,
+  PRIMARY KEY (`id`)
+);
+
+
+  
+  DROP TABLE IF EXISTS `users`;
+  
+  
+  CREATE TABLE `users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `login_id` varchar(40) NOT NULL,
+  `password` varchar(45) NOT NULL,
+  `created_on` datetime(6) NOT NULL,
+  PRIMARY KEY (`id`)
+)
+
