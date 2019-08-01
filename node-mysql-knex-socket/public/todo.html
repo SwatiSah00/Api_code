@@ -1,0 +1,171 @@
+<html>
+
+<head>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:700,600' rel='stylesheet' type='text/css'>
+  <style>
+
+  </style>
+
+</head>
+
+<body>
+  <button id="logout">Logout</button>
+  <br />
+  <br />
+  <input style="width: 300px;" placeholder="Subject" id="subject" />
+  <br />
+  <textarea cols="10" rows="4" placeholder="Description" id="description">
+</textarea>
+  <br />
+  <button id="todo_submit">Send</button>
+  <div id="shareDiv">
+    <br />
+    <button id="shareList">Share</button>
+    <input style="width: 300px;" placeholder="Share User Id" id="shareUserId" />
+  </div>
+  <br />
+
+  <ul id="myToDoList">
+
+  </ul>
+  <script src="./js/jquery-3.4.1.min.js" type="text/javascript"></script>
+  <script src="./js/js.cookie.min.js" type="text/javascript"></script>
+  <script src="./js/todo.js" type="text/javascript"></script>
+  <script>
+
+    $(document).ready(function () {
+      var listId = getUrlVars()["id"];
+      var sharable = getUrlVars()["sharable"];
+      if (sharable == "false") {
+        $("#shareDiv").hide();
+      }
+
+      if (listId)
+        getMyToDo();
+      else
+        alert("No List Id found")
+
+      $('#todo_submit').click(function () {
+        let date = new Date();
+
+        var subject = $("#subject").val();
+        var description = $("#description").val();
+        var listId = getUrlVars()["id"];
+        var params = {
+          listId: listId,
+          subject: subject,
+          description: description,
+          completionDate: date
+        };
+        $.ajax({
+          url: "/api/todo/todo",
+          dataType: 'json',
+          type: 'post',
+          contentType: 'application/json',
+          data: JSON.stringify(params),
+          success: function (data) {
+            console.log(data);
+            if (data.status)
+              getMyToDo();
+          },
+          error: function (res, status) {
+            console.log(res, status);
+            if (res.status == 401) {
+              // window.location = "login.html"
+              removeAllcookies();
+            }
+          }
+        });
+      });
+
+      $('#shareList').click(function () {
+        var params = {
+          senderId: $("#shareUserId").val(),
+          listId: getUrlVars()["id"]
+        };
+        $.ajax({
+          url: "/api/todo/shareTodo",
+          dataType: 'json',
+          type: 'post',
+          contentType: 'application/json',
+          data: JSON.stringify(params),
+          success: function (data) {
+            console.log(data);
+            if (data.status)
+              getMyToDo();
+          },
+          error: function (res, status) {
+            console.log(res, status);
+            if (res.status == 401) {
+              // window.location = "login.html"
+              removeAllcookies();
+            }
+          }
+        });
+      });
+
+    });
+
+    function getMyToDo() {
+      var listId = getUrlVars()["id"];
+      $("#myToDoList").html('');
+      $.ajax({
+        url: "/api/todo/todo/" + listId,
+        dataType: 'json',
+        type: 'get',
+        contentType: 'application/json',
+        success: function (res) {
+          console.log(res);
+          if (res.data.length > 0) {
+            for (var i = 0; i < res.data.length; i++) {
+              $("#myToDoList").append('<li>' + res.data[i].subject + '</li>');
+            }
+          } else {
+            $("#myToDoList").html("No ToDo list item found, please add one");
+          }
+        },
+        error: function (res, status) {
+          console.log(res, status);
+          if (res.status == 401) {
+            // window.location = "login.html"
+            removeAllcookies();
+          }
+        }
+      });
+    }
+
+    function deleteItem(id) {
+      $.ajax({
+        url: "/api/todo/todo/" + id,
+        dataType: 'json',
+        type: 'delete',
+        contentType: 'application/json',
+        success: function (res) {
+          if (res.status == true) {
+            getMyList()
+          } else {
+            console.log(res);
+          }
+        },
+        error: function (res, status) {
+          console.log(res, status);
+          if (res.status == 401) {
+            // window.location = "login.html"
+            removeAllcookies();
+          }
+        }
+      });
+    }
+
+    function getUrlVars() {
+      var vars = {};
+      var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+        vars[key] = value;
+      });
+      return vars;
+    }
+
+  </script>
+</body>
+
+</html>
